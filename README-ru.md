@@ -1,6 +1,6 @@
 # Yandex Lockbox PHP SDK
 
-![Yandex Lockbox PHP SDK](https://i.ibb.co/3yms3FTY/yandex-lockbox-php-hero.png)
+![Yandex Lockbox PHP SDK](https://github.com/user-attachments/assets/96588cc3-f6b7-4aa8-be93-c7c14e14bf38)
 
 > 🇬🇧 [English version](README.md)
 
@@ -45,12 +45,15 @@ composer require tigusigalpa/yandex-lockbox-php
 
 ```json
 {
-  "repositories": [
-    { "type": "path", "url": "public_html/packages/yandex-lockbox-php" }
-  ],
-  "require": {
-    "tigusigalpa/yandex-lockbox-php": "*"
-  }
+    "repositories": [
+        {
+            "type": "path",
+            "url": "public_html/packages/yandex-lockbox-php"
+        }
+    ],
+    "require": {
+        "tigusigalpa/yandex-lockbox-php": "*"
+    }
 }
 ```
 
@@ -90,6 +93,7 @@ YANDEX_LOCKBOX_FOLDER_ID=your-default-folder-id
 **Документация:** [Руководство по OAuth токенам](https://yandex.cloud/ru/docs/iam/concepts/authorization/oauth-token)
 
 **Получите токен через OAuth запрос:**
+
 ```
 https://oauth.yandex.ru/authorize?response_type=token&client_id=1a6990aa636648e9b2ef855fa7bec2fb
 ```
@@ -103,6 +107,7 @@ https://oauth.yandex.ru/authorize?response_type=token&client_id=1a6990aa636648e9
    ```
 
 **Или передайте напрямую в OAuthTokenManager:**
+
 ```php
 use Tigusigalpa\YandexLockbox\Auth\OAuthTokenManager;
 
@@ -123,17 +128,19 @@ $iamToken = $manager->getIamToken();
 ```
 
 **Альтернатива - используя Yandex CLI:**
+
 ```bash
 yc iam create-token
 ```
-⚠️ Примечание: IAM токены истекают через 12 часов
 
+⚠️ Примечание: IAM токены истекают через 12 часов
 
 ### Шаг 3: Получение Cloud ID
 
 **Документация:** [Получение списка ресурсов Cloud](https://yandex.cloud/ru/docs/resource-manager/api-ref/Cloud/list)
 
 **Список всех облаков:**
+
 ```php
 $manager = new OAuthTokenManager('y0_your-oauth-token');
 
@@ -149,6 +156,7 @@ $cloudId = $clouds[0]['id'];
 ```
 
 **Или получить первое облако напрямую:**
+
 ```php
 // Получить ID первого облака (удобный метод)
 $cloudId = $manager->getFirstCloudId();
@@ -156,9 +164,11 @@ $cloudId = $manager->getFirstCloudId();
 
 ### Шаг 4: Получение Folder ID
 
-**Документация:** [Получение списка ресурсов Folder в указанном облаке](https://yandex.cloud/ru/docs/resource-manager/api-ref/Folder/list)
+**Документация:
+** [Получение списка ресурсов Folder в указанном облаке](https://yandex.cloud/ru/docs/resource-manager/api-ref/Folder/list)
 
 **Список всех папок в облаке:**
+
 ```php
 // Получить все папки в облаке
 $folders = $manager->listFolders($cloudId);
@@ -172,6 +182,7 @@ $folderId = $folders[0]['id'];
 ```
 
 **Или получить первую папку напрямую:**
+
 ```php
 // Получить ID первой папки (удобный метод)
 $folderId = $manager->getFirstFolderId($cloudId);
@@ -186,9 +197,11 @@ $folderId = $manager->getFirstFolderIdFromFirstCloud();
 
 > **Сначала необходимо получить Subject ID (ID учетной записи пользователя, которому вы хотите назначить права)**
 
-**Документация:** [Субъекты, которым назначаются роли](https://yandex.cloud/ru/docs/iam/concepts/access-control/#subject)
+**Документация:
+** [Субъекты, которым назначаются роли](https://yandex.cloud/ru/docs/iam/concepts/access-control/#subject)
 
-**Документация:** [Получение списка учетных записей Yandex Passport](https://yandex.cloud/ru/docs/iam/api-ref/YandexPassportUserAccount/getByLogin)
+**Документация:
+** [Получение списка учетных записей Yandex Passport](https://yandex.cloud/ru/docs/iam/api-ref/YandexPassportUserAccount/getByLogin)
 
 ```php
 $subjectId = $manager->getUserIdByLogin('your-yandex-login'); // your-yandex-login@yandex.ru
@@ -196,7 +209,8 @@ $subjectId = $manager->getUserIdByLogin('your-yandex-login'); // your-yandex-log
 
 **Документация:** [lockbox.editor](https://yandex.cloud/ru/docs/lockbox/security/#lockbox-editor)
 
-**Документация:** [Настройка прав доступа к папке](https://yandex.cloud/ru/docs/resource-manager/operations/folder/set-access-bindings)
+**Документация:
+** [Настройка прав доступа к папке](https://yandex.cloud/ru/docs/resource-manager/operations/folder/set-access-bindings)
 
 ```php
 $manager->assignRoleToFolder(
@@ -461,12 +475,14 @@ composer test-coverage
 ### Методы OAuthTokenManager
 
 #### Аутентификация и управление токенами
+
 - `getIamToken(): string` - Получить IAM токен (автоматически кэшируется)
 - `listClouds(): array` - Список всех облаков
 - `getFirstCloud(): array` - Получить первое облако
 - `getFirstCloudId(): string` - Получить ID первого облака
 
 #### Управление папками
+
 - `listFolders(string $cloudId): array` - Список папок в облаке
 - `getFolder(string $folderId): array` - Получить детали папки
 - `getFirstFolderId(string $cloudId): string` - Получить ID первой папки
@@ -474,21 +490,25 @@ composer test-coverage
 - `createFolder(string $iamToken, string $cloudId, string $name, ?string $description = null): array` - Создать папку
 
 #### Управление доступом
+
 - `assignRoleToFolder(...)` - Назначить роль папке
 - `listFolderAccessBindings(...)` - Список привязок доступа к папке
 - `getAllFolderAccessBindings(...)` - Получить все привязки доступа
 
 #### Управление пользователями
+
 - `getUserByLogin(string $login): array` - Получить информацию о пользователе
 - `getUserIdByLogin(string $login): string` - Получить ID пользователя
 
 #### Асинхронные операции
+
 - `waitForOperation(...)` - Дождаться завершения операции
 - `getOperation(...)` - Получить статус операции
 
 ### Методы Client
 
 #### Управление секретами
+
 - `listSecrets(string $folderId): array` - Список секретов в папке
 - `getSecret(string $secretId): array` - Получить метаданные секрета
 - `createSecret(array $data): array` - Создать новый секрет
@@ -496,6 +516,7 @@ composer test-coverage
 - `deleteSecret(string $secretId): void` - Удалить секрет
 
 #### Управление версиями
+
 - `addVersion(string $secretId, array $data): array` - Добавить новую версию
 - `getPayload(string $secretId, ?string $versionId = null): array` - Получить содержимое секрета
 

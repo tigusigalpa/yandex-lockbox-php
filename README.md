@@ -1,6 +1,6 @@
 # Yandex Lockbox PHP SDK
 
-![Yandex Lockbox PHP SDK](https://i.ibb.co/3yms3FTY/yandex-lockbox-php-hero.png)
+![Yandex Lockbox PHP SDK](https://github.com/user-attachments/assets/96588cc3-f6b7-4aa8-be93-c7c14e14bf38)
 
 > 🇷🇺 [Русская версия документации](README-ru.md)
 
@@ -45,12 +45,15 @@ For mono-repo development, add to your root `composer.json`:
 
 ```json
 {
-  "repositories": [
-    { "type": "path", "url": "public_html/packages/yandex-lockbox-php" }
-  ],
-  "require": {
-    "tigusigalpa/yandex-lockbox-php": "*"
-  }
+    "repositories": [
+        {
+            "type": "path",
+            "url": "public_html/packages/yandex-lockbox-php"
+        }
+    ],
+    "require": {
+        "tigusigalpa/yandex-lockbox-php": "*"
+    }
 }
 ```
 
@@ -90,6 +93,7 @@ YANDEX_LOCKBOX_FOLDER_ID=your-default-folder-id
 **Documentation:** [OAuth Token Guide](https://yandex.cloud/en/docs/iam/concepts/authorization/oauth-token)
 
 **Get token via OAuth request:**
+
 ```
 https://oauth.yandex.com/authorize?response_type=token&client_id=1a6990aa636648e9b2ef855fa7bec2fb
 ```
@@ -103,6 +107,7 @@ https://oauth.yandex.com/authorize?response_type=token&client_id=1a6990aa636648e
    ```
 
 **Or pass directly to OAuthTokenManager:**
+
 ```php
 use Tigusigalpa\YandexLockbox\Auth\OAuthTokenManager;
 
@@ -123,17 +128,20 @@ $iamToken = $manager->getIamToken();
 ```
 
 **Alternative - using Yandex CLI:**
+
 ```bash
 yc iam create-token
 ```
-⚠️ Note: IAM tokens expire after 12 hours
 
+⚠️ Note: IAM tokens expire after 12 hours
 
 ### Step 3: Getting Cloud ID
 
-**Documentation:** [Retrieves the list of Cloud resources](https://yandex.cloud/en/docs/resource-manager/api-ref/Cloud/list)
+**Documentation:
+** [Retrieves the list of Cloud resources](https://yandex.cloud/en/docs/resource-manager/api-ref/Cloud/list)
 
 **List all clouds:**
+
 ```php
 $manager = new OAuthTokenManager('y0_your-oauth-token');
 
@@ -149,6 +157,7 @@ $cloudId = $clouds[0]['id'];
 ```
 
 **Or get first cloud directly:**
+
 ```php
 // Get first cloud ID (convenience method)
 $cloudId = $manager->getFirstCloudId();
@@ -156,9 +165,11 @@ $cloudId = $manager->getFirstCloudId();
 
 ### Step 4: Getting Folder ID
 
-**Documentation:** [Retrieves the list of Folder resources in the specified cloud](https://yandex.cloud/en/docs/resource-manager/api-ref/Folder/list)
+**Documentation:
+** [Retrieves the list of Folder resources in the specified cloud](https://yandex.cloud/en/docs/resource-manager/api-ref/Folder/list)
 
 **List all folders in cloud:**
+
 ```php
 // Get all folders in cloud
 $folders = $manager->listFolders($cloudId);
@@ -172,6 +183,7 @@ $folderId = $folders[0]['id'];
 ```
 
 **Or get first folder directly:**
+
 ```php
 // Get first folder ID (convenience method)
 $folderId = $manager->getFirstFolderId($cloudId);
@@ -186,9 +198,11 @@ $folderId = $manager->getFirstFolderIdFromFirstCloud();
 
 > **You need to get Subject ID (user account ID that you want to assign permissions to) first**
 
-**Documentation:** [Subjects that roles are assigned to](https://yandex.cloud/en/docs/iam/concepts/access-control/#subject)
+**Documentation:
+** [Subjects that roles are assigned to](https://yandex.cloud/en/docs/iam/concepts/access-control/#subject)
 
-**Documentation:** [Retrieves the list of Yandex Passport user accounts](https://yandex.cloud/en/docs/iam/api-ref/YandexPassportUserAccount/getByLogin)
+**Documentation:
+** [Retrieves the list of Yandex Passport user accounts](https://yandex.cloud/en/docs/iam/api-ref/YandexPassportUserAccount/getByLogin)
 
 ```php
 $subjectId = $manager->getUserIdByLogin('your-yandex-login'); // your-yandex-login@yandex.ru
@@ -196,7 +210,8 @@ $subjectId = $manager->getUserIdByLogin('your-yandex-login'); // your-yandex-log
 
 **Documentation:** [lockbox.editor](https://yandex.cloud/en/docs/lockbox/security/#lockbox-editor)
 
-**Documentation:** [Setting up folder access permissions](https://yandex.cloud/en/docs/resource-manager/operations/folder/set-access-bindings)
+**Documentation:
+** [Setting up folder access permissions](https://yandex.cloud/en/docs/resource-manager/operations/folder/set-access-bindings)
 
 ```php
 $manager->assignRoleToFolder(
@@ -306,7 +321,8 @@ $client->setAccessBindings($secretId, [
 
 ### Handling Asynchronous Operations
 
-Some Yandex Cloud operations (like `assignRoleToFolder`) are asynchronous and return an operation object with `done=false`. You have two options:
+Some Yandex Cloud operations (like `assignRoleToFolder`) are asynchronous and return an operation object with
+`done=false`. You have two options:
 
 **Option 1: Wait for completion automatically**
 
@@ -518,6 +534,7 @@ php artisan lockbox:test --cleanup
 ```
 
 **Output:**
+
 ```
 🚀 Testing Yandex Lockbox Connection
 ==================================================
@@ -598,12 +615,19 @@ php artisan lockbox:add-version e6q7r8s9t0u1v2w3x4y5 --file=secrets.json
 ```
 
 **JSON file format:**
+
 ```json
 {
-  "payloadEntries": [
-    {"key": "API_KEY", "textValue": "my-key"},
-    {"key": "API_SECRET", "textValue": "my-secret"}
-  ]
+    "payloadEntries": [
+        {
+            "key": "API_KEY",
+            "textValue": "my-key"
+        },
+        {
+            "key": "API_SECRET",
+            "textValue": "my-secret"
+        }
+    ]
 }
 ```
 
@@ -679,12 +703,14 @@ composer test-coverage
 ### OAuthTokenManager Methods
 
 #### Authentication & Token Management
+
 - `getIamToken(): string` - Get IAM token (cached automatically)
 - `listClouds(): array` - List all clouds
 - `getFirstCloud(): array` - Get first cloud
 - `getFirstCloudId(): string` - Get first cloud ID
 
 #### Folder Management
+
 - `listFolders(string $cloudId): array` - List folders in cloud
 - `getFolder(string $folderId): array` - Get folder details
 - `getFirstFolder(string $cloudId): array` - Get first folder
@@ -693,21 +719,32 @@ composer test-coverage
 - `createFolder(string $iamToken, string $cloudId, string $name, ?string $description = null): array` - Create folder
 
 #### Access Control (Permissions)
-- `assignRoleToFolder(string $iamToken, string $folderId, string $subjectId, string $role = 'lockbox.editor', string $subjectType = 'userAccount', bool $waitForCompletion = false, int $maxWaitSeconds = 60): array` - Assign role to folder
-- `listFolderAccessBindings(string $iamToken, string $folderId, int $pageSize = 100, ?string $pageToken = null): array` - List folder access bindings (paginated)
-- `getAllFolderAccessBindings(string $iamToken, string $folderId): array` - Get all folder access bindings (auto-pagination)
+
+-
+`assignRoleToFolder(string $iamToken, string $folderId, string $subjectId, string $role = 'lockbox.editor', string $subjectType = 'userAccount', bool $waitForCompletion = false, int $maxWaitSeconds = 60): array` -
+Assign role to folder
+-
+`listFolderAccessBindings(string $iamToken, string $folderId, int $pageSize = 100, ?string $pageToken = null): array` -
+List folder access bindings (paginated)
+- `getAllFolderAccessBindings(string $iamToken, string $folderId): array` - Get all folder access bindings (
+  auto-pagination)
 
 #### User Management
+
 - `getUserByLogin(string $login): array` - Get full user info by Yandex login
 - `getUserIdByLogin(string $login): string` - Get user ID (Subject ID) by Yandex login
 
 #### Async Operations
-- `waitForOperation(string $iamToken, string $operationId, int $maxWaitSeconds = 60, int $pollIntervalSeconds = 2): array` - Wait for operation to complete
+
+-
+`waitForOperation(string $iamToken, string $operationId, int $maxWaitSeconds = 60, int $pollIntervalSeconds = 2): array` -
+Wait for operation to complete
 - `getOperation(string $iamToken, string $operationId): array` - Get operation status
 
 ### Client Methods
 
 #### Secret Management
+
 - `listSecrets(string $folderId): array` - List secrets in folder
 - `getSecret(string $secretId): array` - Get secret metadata
 - `createSecret(array $data): array` - Create new secret
@@ -715,6 +752,7 @@ composer test-coverage
 - `deleteSecret(string $secretId): void` - Delete secret
 
 #### Version Management
+
 - `addVersion(string $secretId, array $data): array` - Add new version to secret
 - `getPayload(string $secretId, ?string $versionId = null): array` - Get secret payload
 
