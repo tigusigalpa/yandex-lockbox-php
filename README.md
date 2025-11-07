@@ -1,8 +1,6 @@
 # Yandex Lockbox PHP SDK
 
-<p align="center">
-  <img src="https://i.ibb.co/3yms3FTY/yandex-lockbox-php-hero.png" alt="Yandex Lockbox PHP SDK" />
-</p>
+![Yandex Lockbox PHP SDK](https://i.ibb.co/3yms3FTY/yandex-lockbox-php-hero.png)
 
 > 🇷🇺 [Русская версия документации](README-ru.md)
 
