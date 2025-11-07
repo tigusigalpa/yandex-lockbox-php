@@ -1,0 +1,63 @@
+{
+  "name": "tigusigalpa/yandex-lockbox-php",
+  "description": "PHP/Laravel client library for Yandex Lockbox (secrets storage) API.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "tigusigalpa",
+      "email": "sovletig@gmail.com",
+      "homepage": "https://github.com/tigusigalpa"
+    }
+  ],
+  "homepage": "https://github.com/tigusigalpa/yandex-lockbox-php",
+  "keywords": [
+    "yandex",
+    "lockbox",
+    "secrets",
+    "laravel",
+    "php",
+    "sdk",
+    "client"
+  ],
+  "require": {
+    "php": ">=8.0",
+    "guzzlehttp/guzzle": "^7.0 | ^8.0",
+    "psr/log": "^1.0 | ^2.0 | ^3.0"
+  },
+  "require-dev": {
+    "illuminate/support": "^8.0 | ^9.0 | ^10.0 | ^11.0 | ^12.0",
+    "phpunit/phpunit": "^9.5 | ^10.0 | ^11.0",
+    "mockery/mockery": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Tigusigalpa\\YandexLockbox\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tigusigalpa\\YandexLockbox\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test-coverage": "phpunit --coverage-html build/coverage",
+    "format": "php-cs-fixer fix",
+    "format-check": "php-cs-fixer fix --dry-run --diff"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Tigusigalpa\\YandexLockbox\\Laravel\\LockboxServiceProvider"
+      ],
+      "aliases": {
+        "Lockbox": "Tigusigalpa\\YandexLockbox\\Laravel\\Facades\\Lockbox"
+      }
+    }
+  },
+  "support": {
+    "issues": "https://github.com/tigusigalpa/yandex-lockbox-php/issues",
+    "source": "https://github.com/tigusigalpa/yandex-lockbox-php"
+  }
+}
