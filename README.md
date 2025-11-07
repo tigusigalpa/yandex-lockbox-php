@@ -1,5 +1,11 @@
 # Yandex Lockbox PHP SDK
 
+<p align="center">
+  <img src="https://i.ibb.co/3yms3FTY/yandex-lockbox-php-hero.png" alt="Yandex Lockbox PHP SDK" />
+</p>
+
+> 🇷🇺 [Русская версия документации](README-ru.md)
+
 [![Latest Version](https://img.shields.io/packagist/v/tigusigalpa/yandex-lockbox-php.svg?style=flat-square)](https://packagist.org/packages/tigusigalpa/yandex-lockbox-php)
 [![PHP Version](https://img.shields.io/packagist/php-v/tigusigalpa/yandex-lockbox-php.svg?style=flat-square)](https://packagist.org/packages/tigusigalpa/yandex-lockbox-php)
 [![License](https://img.shields.io/packagist/l/tigusigalpa/yandex-lockbox-php.svg?style=flat-square)](https://packagist.org/packages/tigusigalpa/yandex-lockbox-php)
