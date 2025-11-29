@@ -11,6 +11,8 @@
 
 PHP/Laravel client library for **Yandex Lockbox** — a secure secrets storage service in Yandex Cloud.
 
+> **Note:** This package uses [yandex-cloud-client-php](https://github.com/tigusigalpa/yandex-cloud-client-php) for Yandex Cloud infrastructure management (authentication, organizations, clouds, folders).
+
 ## 📚 Documentation
 
 - [Yandex Lockbox Docs](https://yandex.cloud/en/docs/lockbox/)
@@ -23,7 +25,7 @@ PHP/Laravel client library for **Yandex Lockbox** — a secure secrets storage s
 
 - ✅ Full Yandex Lockbox API support
 - ✅ **Automatic IAM token generation from OAuth token**
-- ✅ OAuth Token Manager for cloud/folder management
+- ✅ **Cloud infrastructure management** via yandex-cloud-client-php
 - ✅ **Async operation handling** (wait for operations to complete)
 - ✅ **Folder permissions management** (list/assign access bindings)
 - ✅ PHP 8.0+ with strict types
@@ -106,12 +108,12 @@ https://oauth.yandex.com/authorize?response_type=token&client_id=1a6990aa636648e
    YANDEX_LOCKBOX_TOKEN=y0_your-oauth-token
    ```
 
-**Or pass directly to OAuthTokenManager:**
+**Or pass directly to OAuthTokenProvider:**
 
 ```php
-use Tigusigalpa\YandexLockbox\Auth\OAuthTokenManager;
+use Tigusigalpa\YandexLockbox\Token\OAuthTokenProvider;
 
-$manager = new OAuthTokenManager('y0_your-oauth-token');
+$tokenProvider = new OAuthTokenProvider('y0_your-oauth-token');
 ```
 
 ### Step 2: Getting IAM Token (Optional)
@@ -121,10 +123,10 @@ $manager = new OAuthTokenManager('y0_your-oauth-token');
 IAM token is generated automatically from OAuth token. But you can get it manually:
 
 ```php
-$manager = new OAuthTokenManager('y0_your-oauth-token');
+$tokenProvider = new OAuthTokenProvider('y0_your-oauth-token');
 
 // Get IAM token (cached for 12 hours)
-$iamToken = $manager->getIamToken();
+$iamToken = $tokenProvider->getToken();
 ```
 
 **Alternative - using Yandex CLI:**
@@ -137,59 +139,61 @@ yc iam create-token
 
 ### Step 3: Getting Cloud ID
 
-**Documentation:
-** [Retrieves the list of Cloud resources](https://yandex.cloud/en/docs/resource-manager/api-ref/Cloud/list)
+**Documentation:** [Retrieves the list of Cloud resources](https://yandex.cloud/en/docs/resource-manager/api-ref/Cloud/list)
 
 **List all clouds:**
 
 ```php
-$manager = new OAuthTokenManager('y0_your-oauth-token');
+$tokenProvider = new OAuthTokenProvider('y0_your-oauth-token');
+
+// Get cloud client for infrastructure management
+$cloudClient = $tokenProvider->getCloudClient();
 
 // Get all clouds
-$clouds = $manager->listClouds();
+$clouds = $cloudClient->clouds()->list();
 
-foreach ($clouds as $cloud) {
+foreach ($clouds['clouds'] as $cloud) {
     echo "Cloud: {$cloud['name']} (ID: {$cloud['id']})\n";
 }
 
 // Use first cloud
-$cloudId = $clouds[0]['id'];
+$cloudId = $clouds['clouds'][0]['id'];
 ```
 
 **Or get first cloud directly:**
 
 ```php
 // Get first cloud ID (convenience method)
-$cloudId = $manager->getFirstCloudId();
+$cloudId = $tokenProvider->getFirstCloudId();
 ```
 
 ### Step 4: Getting Folder ID
 
-**Documentation:
-** [Retrieves the list of Folder resources in the specified cloud](https://yandex.cloud/en/docs/resource-manager/api-ref/Folder/list)
+**Documentation:** [Retrieves the list of Folder resources in the specified cloud](https://yandex.cloud/en/docs/resource-manager/api-ref/Folder/list)
 
 **List all folders in cloud:**
 
 ```php
 // Get all folders in cloud
-$folders = $manager->listFolders($cloudId);
+$cloudClient = $tokenProvider->getCloudClient();
+$folders = $cloudClient->folders()->list($cloudId);
 
-foreach ($folders as $folder) {
+foreach ($folders['folders'] as $folder) {
     echo "Folder: {$folder['name']} (ID: {$folder['id']})\n";
 }
 
 // Use first folder
-$folderId = $folders[0]['id'];
+$folderId = $folders['folders'][0]['id'];
 ```
 
 **Or get first folder directly:**
 
 ```php
 // Get first folder ID (convenience method)
-$folderId = $manager->getFirstFolderId($cloudId);
+$folderId = $tokenProvider->getFirstFolderId($cloudId);
 
 // Or get first folder from first cloud in one call
-$folderId = $manager->getFirstFolderIdFromFirstCloud();
+$folderId = $tokenProvider->getFirstFolderIdFromFirstCloud();
 ```
 
 ### Step 5: Add permissions to a folder

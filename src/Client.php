@@ -6,7 +6,6 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\BadResponseException;
 use Psr\Log\LoggerInterface;
 use Throwable;
-use Tigusigalpa\YandexLockbox\Auth\OAuthTokenManager;
 use Tigusigalpa\YandexLockbox\Exceptions\AuthenticationException;
 use Tigusigalpa\YandexLockbox\Exceptions\LockboxException;
 use Tigusigalpa\YandexLockbox\Exceptions\NotFoundException;
@@ -16,6 +15,10 @@ use Tigusigalpa\YandexLockbox\Token\TokenProviderInterface;
 
 class Client
 {
+    private const SECRETS_ENDPOINT = 'https://lockbox.api.cloud.yandex.net/lockbox/v1/secrets';
+    private const SECRETS_PAYLOAD_ENDPOINT = 'https://payload.lockbox.api.cloud.yandex.net/lockbox/v1/secrets';
+    private const SECRETS_OPERATIONS_ENDPOINT = 'https://operation.api.cloud.yandex.net/operations';
+    
     private GuzzleClient $http;
     private GuzzleClient $httpPayload;
     private GuzzleClient $httpOperations;
@@ -33,9 +36,9 @@ class Client
     ) {
         $this->tokenProvider = $tokenProvider;
         // Ensure base URI ends with / for proper path concatenation in Guzzle
-        $baseUri = $baseUri ?: OAuthTokenManager::SECRETS_ENDPOINT;
-        $baseUriPayload = OAuthTokenManager::SECRETS_PAYLOAD_ENDPOINT;
-        $baseUriOperations = OAuthTokenManager::SECRETS_OPERATIONS_ENDPOINT;
+        $baseUri = $baseUri ?: self::SECRETS_ENDPOINT;
+        $baseUriPayload = self::SECRETS_PAYLOAD_ENDPOINT;
+        $baseUriOperations = self::SECRETS_OPERATIONS_ENDPOINT;
         $this->baseUri = rtrim($baseUri, '/').'/';
         $this->baseUriPayload = rtrim($baseUriPayload, '/').'/';
         $this->baseUriOperations = rtrim($baseUriOperations, '/').'/';

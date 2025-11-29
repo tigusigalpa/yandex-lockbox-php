@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Tigusigalpa\YandexLockbox\Token;
 
 use GuzzleHttp\Client;
-use Tigusigalpa\YandexLockbox\Auth\OAuthTokenManager;
+use Tigusigalpa\YandexCloudClient\YandexCloudClient;
 use Tigusigalpa\YandexLockbox\Exceptions\AuthenticationException;
 
 /**
  * OAuth Token Provider
  * 
- * Automatically obtains IAM token from OAuth token using OAuthTokenManager.
+ * Automatically obtains IAM token from OAuth token using YandexCloudClient.
  * IAM tokens expire after 12 hours, so they are refreshed automatically.
  */
 class OAuthTokenProvider implements TokenProviderInterface
 {
-    private OAuthTokenManager $tokenManager;
+    private YandexCloudClient $cloudClient;
 
     /**
      * @param string $oauthToken OAuth token from Yandex OAuth
@@ -24,7 +24,7 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function __construct(string $oauthToken, ?Client $httpClient = null)
     {
-        $this->tokenManager = new OAuthTokenManager($oauthToken, $httpClient);
+        $this->cloudClient = new YandexCloudClient($oauthToken, $httpClient);
     }
 
     /**
@@ -35,17 +35,17 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getToken(): string
     {
-        return $this->tokenManager->getIamToken();
+        return $this->cloudClient->getAuthManager()->getValidIamToken();
     }
 
     /**
-     * Get OAuth Token Manager instance for advanced operations
+     * Get Yandex Cloud Client instance for advanced operations
      * 
-     * @return OAuthTokenManager
+     * @return YandexCloudClient
      */
-    public function getTokenManager(): OAuthTokenManager
+    public function getCloudClient(): YandexCloudClient
     {
-        return $this->tokenManager;
+        return $this->cloudClient;
     }
 
     /**
@@ -55,7 +55,7 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function invalidateToken(): void
     {
-        $this->tokenManager->invalidateToken();
+        $this->cloudClient->getAuthManager()->clearCache();
     }
 
     /**
@@ -65,7 +65,7 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getOAuthToken(): string
     {
-        return $this->tokenManager->getOAuthToken();
+        return $this->cloudClient->getAuthManager()->getOAuthToken();
     }
 
     /**
@@ -75,7 +75,7 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function hasValidToken(): bool
     {
-        return $this->tokenManager->hasValidToken();
+        return $this->cloudClient->getAuthManager()->hasValidCachedToken();
     }
 
     /**
@@ -85,7 +85,8 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getTokenExpiresAt(): ?int
     {
-        return $this->tokenManager->getTokenExpiresAt();
+        // YandexCloudClient doesn't expose expiration time directly
+        return null;
     }
 
     /**
@@ -96,7 +97,8 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getFirstCloud(): ?array
     {
-        return $this->tokenManager->getFirstCloud();
+        $clouds = $this->cloudClient->clouds()->list();
+        return $clouds['clouds'][0] ?? null;
     }
 
     /**
@@ -107,7 +109,8 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getFirstCloudId(): ?string
     {
-        return $this->tokenManager->getFirstCloudId();
+        $cloud = $this->getFirstCloud();
+        return $cloud['id'] ?? null;
     }
 
     /**
@@ -119,7 +122,8 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getFirstFolder(string $cloudId): ?array
     {
-        return $this->tokenManager->getFirstFolder($cloudId);
+        $folders = $this->cloudClient->folders()->list($cloudId);
+        return $folders['folders'][0] ?? null;
     }
 
     /**
@@ -131,7 +135,8 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getFirstFolderId(string $cloudId): ?string
     {
-        return $this->tokenManager->getFirstFolderId($cloudId);
+        $folder = $this->getFirstFolder($cloudId);
+        return $folder['id'] ?? null;
     }
 
     /**
@@ -142,7 +147,11 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getFirstFolderIdFromFirstCloud(): ?string
     {
-        return $this->tokenManager->getFirstFolderIdFromFirstCloud();
+        $cloudId = $this->getFirstCloudId();
+        if ($cloudId === null) {
+            return null;
+        }
+        return $this->getFirstFolderId($cloudId);
     }
 
     /**
@@ -154,6 +163,6 @@ class OAuthTokenProvider implements TokenProviderInterface
      */
     public function getUserByLogin(string $login): array
     {
-        return $this->tokenManager->getUserByLogin($login);
+        return $this->cloudClient->userAccounts()->getByLogin($login);
     }
 }
